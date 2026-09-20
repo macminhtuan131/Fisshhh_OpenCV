@@ -1,5 +1,5 @@
 """Lời giải lập trình Chương 2: Image Basics and Filtering.
-
+Tuấn code ngu, AI sửa vãi lìn thật :))) Dell code nữa
 Chạy:
     python chuong2.py
     python chuong2.py --show
@@ -28,7 +28,6 @@ if hasattr(sys.stdout, "reconfigure"):
 def read_image(name: str, flags: int = cv2.IMREAD_COLOR) -> np.ndarray:
     """Đọc ảnh và báo lỗi rõ ràng thay vì để lỗi None xuất hiện về sau."""
     path = DATA / name
-    # cv2.imread trên Windows có thể thất bại với đường dẫn Unicode có dấu.
     encoded = np.fromfile(path, dtype=np.uint8)
     image = cv2.imdecode(encoded, flags)
     if image is None:

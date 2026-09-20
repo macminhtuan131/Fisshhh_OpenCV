@@ -25,9 +25,9 @@ Mã `read_idx_images/read_idx_labels` kiểm tra magic number và kích thước
 
 Pixel gốc nằm trong `[0,255]`. Chia cho 255:
 
-\[
-x'=x/255\in[0,1].
-\]
+```text
+x_normalized = x / 255, nên x_normalized nằm trong khoảng [0, 1].
+```
 
 Chuẩn hóa giúp gradient ổn định hơn và Adam/SGD chọn bước cập nhật dễ hơn. Không thay nhãn vì dùng `sparse_categorical_crossentropy`, hàm này nhận trực tiếp nhãn nguyên 0–9.
 
@@ -41,17 +41,18 @@ Biến ảnh `28×28` thành vector 784 phần tử. Flatten không có tham s�
 
 Một lớp đầy đủ tính:
 
-\[
-z=W x+b,\qquad a=\phi(z).
-\]
+```text
+z = W*x + b
+a = activation(z)
+```
 
 Mỗi trọng số trong `W` đo mức ảnh hưởng của một đầu vào tới một neuron; `b` là độ lệch.
 
 Số tham số Dense với `n_in` đầu vào và `n_out` neuron:
 
-\[
-n_{param}=n_{in}n_{out}+n_{out}.
-\]
+```text
+số tham số = n_in * n_out + n_out
+```
 
 Vì vậy mô hình lớn trong slide `784→2048→4096→10` có:
 
@@ -66,15 +67,15 @@ Vì vậy mô hình lớn trong slide `784→2048→4096→10` có:
 
 Sigmoid:
 
-\[
-\sigma(z)=\frac1{1+e^{-z}}.
-\]
+```text
+sigmoid(z) = 1 / (1 + e^(-z))
+```
 
 Với mạng sâu/lớn, sigmoid dễ bão hòa: ở `|z|` lớn đạo hàm gần 0, gradient truyền ngược yếu. ReLU:
 
-\[
-ReLU(z)=\max(0,z)
-\]
+```text
+ReLU(z) = max(0, z)
+```
 
 thường huấn luyện ANN ảnh nhanh hơn, nên mã mặc định dùng mô hình gọn `784→128→64→10` với ReLU.
 
@@ -82,9 +83,10 @@ thường huấn luyện ANN ảnh nhanh hơn, nên mã mặc định dùng mô 
 
 Với 10 logit `z_k`:
 
-\[
-p_k=\frac{e^{z_k}}{\sum_{j=0}^{9}e^{z_j}},\qquad \sum_kp_k=1.
-\]
+```text
+p[k] = e^(z[k]) / tổng(e^(z[j])) với j chạy từ 0 đến 9
+tổng tất cả p[k] = 1
+```
 
 `p_k` được hiểu là độ tin cậy tương đối cho lớp `k`; dự đoán là `argmax(p)`.
 
@@ -92,15 +94,15 @@ p_k=\frac{e^{z_k}}{\sum_{j=0}^{9}e^{z_j}},\qquad \sum_kp_k=1.
 
 Với nhãn thật `y`, sparse categorical cross-entropy:
 
-\[
-L=-\log p_y.
-\]
+```text
+loss = -log(xác suất mô hình gán cho nhãn đúng y)
+```
 
 Nếu mô hình cho xác suất cao ở lớp đúng, `L` nhỏ; nếu tự tin vào lớp sai, `L` rất lớn. Backpropagation dùng quy tắc dây chuyền tính `∂L/∂W`; optimizer cập nhật:
 
-\[
-W\leftarrow W-\eta\frac{\partial L}{\partial W}.
-\]
+```text
+W mới = W cũ - learning_rate * gradient_của_loss_theo_W
+```
 
 SGD dùng gradient hiện tại. Adam duy trì trung bình động của gradient và bình phương gradient, nên thường hội tụ nhanh hơn với ít chỉnh learning rate hơn. Đây là cơ sở để mô hình ReLU+Adam trong slide tốt/nhanh hơn sigmoid+SGD.
 
@@ -116,11 +118,11 @@ Mã dùng `validation_split=0.2`, `EarlyStopping` và khôi phục trọng số 
 
 `accuracy = số dự đoán đúng / tổng số mẫu`. Với từng lớp còn có:
 
-\[
-Precision=\frac{TP}{TP+FP},\qquad
-Recall=\frac{TP}{TP+FN},\qquad
-F1=\frac{2PR}{P+R}.
-\]
+```text
+Precision = TP / (TP + FP)
+Recall    = TP / (TP + FN)
+F1        = 2 * Precision * Recall / (Precision + Recall)
+```
 
 Ma trận nhầm lẫn `C[i,j]` đếm số ảnh lớp thật `i` bị dự đoán thành `j`. Các ô ngoài đường chéo cho biết cặp chữ số hay nhầm, hữu ích hơn một con số accuracy duy nhất.
 
@@ -180,3 +182,156 @@ python .\code\chuong6_mnist.py --mode predict --image "..\Bài tập đưa sinh 
 - Ảnh test ngoài cần cùng cách chuẩn hóa với ảnh train.
 - `random.randint(1,60000)` có thể trả 60000, vượt chỉ số cuối 59999; nên dùng `randrange(60000)` hoặc generator NumPy.
 - Python hiện tại của máy có thể quá mới so với TensorFlow. Dùng môi trường Python 3.10/3.11 riêng thay vì hạ/nâng gói lung tung trong môi trường chính.
+
+## 11. Code và lệnh quan trọng của chương 6
+
+### 1. Kiểm tra shape trước khi xây dựng mạng
+
+```python
+print(x_train.shape)     # (60000, 28, 28)
+print(y_train.shape)     # (60000,)
+print(x_test.shape)      # (10000, 28, 28)
+print(x_train.dtype)     # uint8 trước chuẩn hóa
+```
+
+Luôn kiểm tra `shape`, `dtype`, `min()` và `max()` trước khi train để phát hiện dữ liệu sai sớm.
+
+### 2. Chuẩn hóa dữ liệu
+
+```python
+x_train = x_train.astype("float32") / 255.0
+x_test = x_test.astype("float32") / 255.0
+
+print(x_train.min(), x_train.max())       # phải gần 0.0 và 1.0
+```
+
+Phải áp dụng cùng một cách tiền xử lý cho train, test và ảnh triển khai.
+
+### 3. Xây dựng ANN bằng Sequential
+
+```python
+import tensorflow as tf
+
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(28, 28)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(128, activation="relu"),
+    tf.keras.layers.Dense(64, activation="relu"),
+    tf.keras.layers.Dense(10, activation="softmax"),
+])
+
+model.summary()
+```
+
+Danh sách trong `Sequential([...])` biểu diễn thứ tự dữ liệu đi qua các lớp. Lớp cuối có 10 neuron vì có 10 chữ số.
+
+### 4. Compile mô hình
+
+```python
+model.compile(
+    optimizer="adam",
+    loss="sparse_categorical_crossentropy",
+    metrics=["accuracy"],
+)
+```
+
+Dùng `sparse_categorical_crossentropy` khi nhãn là số nguyên 0–9. Nếu nhãn đã one-hot mới dùng `categorical_crossentropy`.
+
+### 5. Huấn luyện
+
+```python
+history = model.fit(
+    x_train,
+    y_train,
+    validation_split=0.2,
+    epochs=10,
+    batch_size=64,
+)
+```
+
+- `epochs=10`: đi qua tập train tối đa 10 lần.
+- `batch_size=64`: mỗi lần cập nhật dùng 64 ảnh.
+- `validation_split=0.2`: dành 20% train để kiểm tra trong lúc học.
+- Kết quả `history.history` chứa loss/accuracy theo từng epoch.
+
+### 6. Early stopping
+
+```python
+callback = tf.keras.callbacks.EarlyStopping(
+    monitor="val_loss",
+    patience=2,
+    restore_best_weights=True,
+)
+
+history = model.fit(
+    x_train,
+    y_train,
+    validation_split=0.2,
+    epochs=20,
+    callbacks=[callback],
+)
+```
+
+`patience=2` nghĩa là chờ thêm 2 epoch không cải thiện rồi dừng.
+
+### 7. Đánh giá và dự đoán
+
+```python
+test_loss, test_accuracy = model.evaluate(x_test, y_test)
+
+probabilities = model.predict(x_test[:10])
+predicted_labels = np.argmax(probabilities, axis=1)
+
+print("Nhãn thật:", y_test[:10])
+print("Dự đoán:", predicted_labels)
+```
+
+`axis=1` tìm lớp có xác suất lớn nhất cho **từng ảnh**. Thiếu `axis=1` sẽ tìm một cực đại cho toàn bộ batch.
+
+### 8. Lưu và tải mô hình
+
+```python
+model.save("mnist_compact.keras")
+loaded_model = tf.keras.models.load_model("mnist_compact.keras")
+```
+
+### 9. Chuẩn bị một ảnh ngoài cho dự đoán
+
+```python
+gray = cv2.imread("a2.png", cv2.IMREAD_GRAYSCALE)
+gray = 255 - gray                         # nếu ảnh có nền trắng, nét tối
+gray = cv2.resize(gray, (28, 28))
+tensor = gray.astype("float32") / 255.0
+batch = np.expand_dims(tensor, axis=0)    # (28,28) -> (1,28,28)
+
+probability = loaded_model.predict(batch)
+digit = int(np.argmax(probability, axis=1)[0])
+print("Kết quả:", digit)
+```
+
+Mã hoàn chỉnh còn cắt vùng chữ số, giữ tỉ lệ và căn trọng tâm; đoạn trên chỉ minh họa các lệnh thiết yếu.
+
+### 10. TensorFlow Lite
+
+```python
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+
+with open("mnist_compact.tflite", "wb") as file:
+    file.write(tflite_model)
+```
+
+`"wb"` nghĩa là mở file để ghi dữ liệu nhị phân.
+
+### 11. Các lệnh môi trường và chạy
+
+```powershell
+conda create -n mnist python=3.10 -y
+conda activate mnist
+python -m pip install tensorflow numpy matplotlib opencv-python
+
+cd LOI_GIAI
+python .\code\chuong6_mnist.py --mode inspect
+python .\code\chuong6_mnist.py --mode train --architecture compact --epochs 10
+python .\code\chuong6_mnist.py --mode predict --model .\output\chuong6\mnist_compact.keras --image "đường_dẫn_ảnh.png"
+```

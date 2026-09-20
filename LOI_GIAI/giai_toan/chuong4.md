@@ -8,12 +8,10 @@
 
 Trong cửa sổ `W`, lập
 
-\[
-H=\begin{bmatrix}
-\sum I_x^2&\sum I_xI_y\\
-\sum I_xI_y&\sum I_y^2
-\end{bmatrix}.
-\]
+```text
+H = [ tổng(Ix^2)   tổng(Ix*Iy)
+      tổng(Ix*Iy)  tổng(Iy^2) ]
+```
 
 `H` mô tả mức thay đổi cường độ khi dịch cửa sổ theo mọi hướng. Hai trị riêng là mức thay đổi theo hai phương chính:
 
@@ -23,31 +21,34 @@ H=\begin{bmatrix}
 
 Đạo hàm dùng
 
-\[
-K_x=\frac13\begin{bmatrix}1&0&-1\\1&0&-1\\1&0&-1\end{bmatrix},\quad
-K_y=\frac13\begin{bmatrix}1&1&1\\0&0&0\\-1&-1&-1\end{bmatrix}.
-\]
+```text
+Kx = (1/3) * [ 1  0  -1       Ky = (1/3) * [ 1  1  1
+                 1  0  -1                      0  0  0
+                 1  0  -1 ]                   -1 -1 -1 ]
+```
 
 **Điểm 1:** trong cửa sổ 3×3, slide tính được
 
-\[
-H_1=\begin{bmatrix}158950&57800\\57800&158950\end{bmatrix}.
-\]
+```text
+H1 = [ 158950   57800
+        57800  158950 ]
+```
 
 Với ma trận đối xứng dạng `[[a,b],[b,a]]`, trị riêng là `a-b` và `a+b`:
 
-\[
-\lambda_1=101150,\qquad\lambda_2=216750.
-\]
+```text
+lambda1 = 101150;  lambda2 = 216750
+```
 
 Cả hai lớn ⇒ điểm 1 là **góc**.
 
 **Điểm 2:**
 
-\[
-H_2=\begin{bmatrix}0&0\\0&390150\end{bmatrix},\qquad
-(\lambda_1,\lambda_2)=(0,390150).
-\]
+```text
+H2 = [ 0       0
+       0  390150 ]
+lambda1 = 0;  lambda2 = 390150
+```
 
 Một nhỏ, một lớn ⇒ điểm 2 nằm trên **cạnh**.
 
@@ -57,15 +58,17 @@ Một nhỏ, một lớn ⇒ điểm 2 nằm trên **cạnh**.
 
 Độ lớn:
 
-\[
-M=\begin{bmatrix}20&30&60&90\\45&60&75&50\end{bmatrix},
-\]
+```text
+M = [ 20  30  60  90
+      45  60  75  50 ]
+```
 
 hướng:
 
-\[
-\Theta=\begin{bmatrix}135&67.5&150&330\\210&240&300&22.5\end{bmatrix}^{\circ}.
-\]
+```text
+Theta (độ) = [ 135   67.5  150  330
+                210  240   300   22.5 ]
+```
 
 Các bin: `0,45,90,135,180,225,270,315°`.
 
@@ -73,39 +76,42 @@ Các bin: `0,45,90,135,180,225,270,315°`.
 
 Nếu `θi < θ < θi+1`, một pixel độ lớn `a` không bỏ toàn bộ vào một bin mà chia tuyến tính:
 
-\[
-\Delta h_i=\frac{\theta_{i+1}-\theta}{45}a,\qquad
-\Delta h_{i+1}=\frac{\theta-\theta_i}{45}a.
-\]
+```text
+Mức cộng vào bin i   = ((theta(i+1) - theta) / 45) * a
+Mức cộng vào bin i+1 = ((theta - theta(i)) / 45) * a
+```
 
 Ví dụ `(a,θ)=(30,67.5°)` nằm đúng giữa `45°` và `90°`, nên mỗi bin nhận 15. Góc là đại lượng vòng tròn: `330°` nằm giữa `315°` và `360°≡0°`, nên chia 60 cho bin 315° và 30 cho bin 0°.
 
 Cộng tám pixel:
 
-\[
-h=[55,40,15,60,35,70,45,110].
-\]
+```text
+h = [55, 40, 15, 60, 35, 70, 45, 110]
+```
 
 Chuẩn hóa L2 để giảm ảnh hưởng của độ sáng/độ tương phản chung:
 
-\[
-\tilde h=\frac{h}{\sqrt{\sum h_i^2}}
-\approx[0.32,0.24,0.09,0.35,0.21,0.41,0.27,0.65].
-\]
+```text
+h_normalized = h / sqrt(tổng(h[i]^2))
+             ≈ [0.32, 0.24, 0.09, 0.35, 0.21, 0.41, 0.27, 0.65]
+```
 
 ---
 
 ### Bài 3 — Chuẩn hóa vector và SSD
 
-\[
-A=[1,2,3,4,5],\quad B=[2,3,6,9,10],\quad C=[2.5,6,7,9,12].
-\]
+```text
+A = [1, 2, 3, 4, 5]
+B = [2, 3, 6, 9, 10]
+C = [2.5, 6, 7, 9, 12]
+```
 
 Nếu so trực tiếp, vector có độ lớn lớn hơn dễ tạo khoảng cách lớn dù “hình dạng” tương tự. Vì vậy chuẩn hóa L2:
 
-\[
-\tilde A=A/\|A\|_2,\qquad \|A\|_2=\sqrt{\sum_i A_i^2}.
-\]
+```text
+A_normalized = A / norm(A)
+norm(A) = sqrt(tổng(A[i]^2))
+```
 
 Kết quả:
 
@@ -115,15 +121,17 @@ Kết quả:
 
 Khoảng cách tổng bình phương:
 
-\[
-SSD(P,Q)=\sum_i(P_i-Q_i)^2.
-\]
+```text
+SSD(P, Q) = tổng theo i của (P[i] - Q[i])^2
+```
 
 Theo số đã làm tròn trong slide:
 
-\[
-SSD(A,B)=0.0084,\quad SSD(A,C)=0.0058,\quad SSD(B,C)=0.027.
-\]
+```text
+SSD(A, B) = 0.0084
+SSD(A, C) = 0.0058
+SSD(B, C) = 0.027
+```
 
 Nhỏ nhất là `SSD(A,C)`, nên **A và C giống nhau nhất**. Nếu dùng toàn bộ chữ số thực, số lẻ hơi khác nhưng thứ tự không đổi.
 
@@ -133,15 +141,15 @@ Nhỏ nhất là `SSD(A,C)`, nên **A và C giống nhau nhất**. Nếu dùng t
 
 Với các ảnh làm mờ `L_s=G(σ_s)*I`, lập các ảnh sai khác kề nhau:
 
-\[
-D_s=L_{s+1}-L_s.
-\]
+```text
+D[s] = L[s + 1] - L[s]
+```
 
 Ví dụ ô trên-trái giữa `s=-1` và `s=0`:
 
-\[
-D_{-1}(0,0)=24.15-19.15=5.00.
-\]
+```text
+D[-1](0, 0) = 24.15 - 19.15 = 5.00
+```
 
 Lặp lại cho mọi ô tạo 5 ma trận DoG. Một ứng viên là keypoint nếu lớn hơn **hoặc nhỏ hơn** toàn bộ 26 hàng xóm: 8 cùng tầng, 9 tầng trên và 9 tầng dưới. Phải tìm cả cực đại và cực tiểu vì blob sáng và blob tối đều quan trọng.
 
@@ -157,10 +165,10 @@ Mã hoàn chỉnh: `code/chuong4.py`.
 
 Harris tránh phải tính trị riêng tại mọi pixel bằng đáp ứng:
 
-\[
-R=\det(H)-k\operatorname{trace}(H)^2
-=(S_{xx}S_{yy}-S_{xy}^2)-k(S_{xx}+S_{yy})^2.
-\]
+```text
+R = det(H) - k * trace(H)^2
+  = (Sxx*Syy - Sxy^2) - k*(Sxx + Syy)^2
+```
 
 Quy trình trong mã:
 
@@ -183,3 +191,101 @@ Với từng cell:
 4. Vẽ đoạn thẳng qua tâm cell; hướng đoạn thẳng là bin, độ dài/tông màu biểu diễn độ lớn.
 
 Nếu cộng 90° vào hướng, mọi vector biểu diễn cũng quay 90°. Điều này minh họa HOG mô tả **hướng cạnh/gradient**, không phải chỉ vị trí vật thể.
+
+## III. Code và lệnh quan trọng của chương 4
+
+### 1. Từ đạo hàm tới ma trận cấu trúc Harris
+
+```python
+source = gray.astype(np.float64) / 255.0
+ix = cv2.Sobel(source, cv2.CV_64F, 1, 0, ksize=3)
+iy = cv2.Sobel(source, cv2.CV_64F, 0, 1, ksize=3)
+
+ix2 = ix * ix
+iy2 = iy * iy
+ixiy = ix * iy
+
+# Cộng các giá trị trong cửa sổ 5x5
+sxx = cv2.boxFilter(ix2,  -1, (5, 5), normalize=False)
+syy = cv2.boxFilter(iy2,  -1, (5, 5), normalize=False)
+sxy = cv2.boxFilter(ixiy, -1, (5, 5), normalize=False)
+```
+
+`normalize=False` nghĩa là lấy tổng trong cửa sổ, không chia cho 25.
+
+### 2. Tính đáp ứng Harris
+
+```python
+k = 0.04
+det_h = sxx * syy - sxy * sxy
+trace_h = sxx + syy
+response = det_h - k * trace_h ** 2
+```
+
+`** 2` là bình phương. Toàn bộ phép tính trên là theo từng pixel, không phải phép nhân ma trận thông thường.
+
+### 3. NMS và chọn tối đa 250 góc
+
+```python
+local_max = cv2.dilate(response, np.ones((5, 5), np.uint8))
+mask = (response == local_max) & (response > 0.01 * response.max())
+
+points = np.argwhere(mask)                  # mỗi dòng là [y, x]
+scores = response[mask]
+order = np.argsort(scores)[::-1]            # giảm dần
+points = points[order[:250]]
+
+for y, x in points:
+    cv2.circle(result, (int(x), int(y)), 3, (0, 255, 0), 1)
+```
+
+`[::-1]` đảo thứ tự; `[:250]` lấy tối đa 250 phần tử đầu. `cv2.circle` nhận tọa độ `(x,y)`, ngược thứ tự truy cập ảnh `[y,x]`.
+
+### 4. Harris có sẵn trong OpenCV
+
+```python
+response_cv = cv2.cornerHarris(
+    np.float32(gray) / 255.0,
+    blockSize=5,
+    ksize=3,
+    k=0.04,
+)
+```
+
+### 5. Khung tạo histogram HOG cho mỗi cell
+
+```python
+cell_size = 4
+bins = np.zeros(8, dtype=float)              # 0,45,...,315 độ
+
+position = (angle % 360) / 45.0
+lower = int(np.floor(position)) % 8
+upper = (lower + 1) % 8
+fraction = position - np.floor(position)
+
+bins[lower] += (1 - fraction) * magnitude
+bins[upper] += fraction * magnitude
+
+norm = np.linalg.norm(bins)
+if norm > 0:
+    bins = bins / norm
+```
+
+Dấu `%` là phép chia lấy dư; ở đây nó làm cho bin sau 315° quay lại bin 0°.
+
+### 6. Các hàm hữu ích khi biểu diễn HOG
+
+```python
+theta = np.deg2rad(bin_index * 45)
+dx = length * np.cos(theta)
+dy = length * np.sin(theta)
+plt.plot([cx - dx, cx + dx], [cy - dy, cy + dy])
+```
+
+### 7. Lệnh chạy
+
+```powershell
+cd LOI_GIAI
+python .\code\chuong4.py
+python .\code\chuong4.py --show
+```

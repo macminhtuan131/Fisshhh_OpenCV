@@ -14,20 +14,20 @@ Tâm đầu: `C1=(1,6)`, `C2=(6,1)`.
 
 K-means tối thiểu hóa tổng bình phương khoảng cách từ điểm tới tâm cụm:
 
-\[
-J=\sum_i\|p_i-c_{label(i)}\|_2^2.
-\]
+```text
+J = tổng theo i của [khoảng cách từ p[i] đến tâm cụm của p[i]]^2
+```
 
 Vì vậy hai bước phải lặp:
 
 1. Gán mỗi điểm vào tâm gần nhất theo
-   \[
-   d(p,c)=\sqrt{(x_p-x_c)^2+(y_p-y_c)^2}.
-   \]
+   ```text
+   d(p, c) = sqrt((x_p - x_c)^2 + (y_p - y_c)^2)
+   ```
 2. Cập nhật mỗi tâm bằng trung bình các điểm trong cụm:
-   \[
-   c_j=\frac1{|S_j|}\sum_{p_i\in S_j}p_i.
-   \]
+   ```text
+   c[j] = (tổng các điểm trong cụm j) / (số điểm của cụm j)
+   ```
 
 Nếu khoảng cách hòa, kết quả phụ thuộc quy tắc phá hòa. Slide gán hòa vào `C2` ở lượt đầu.
 
@@ -45,13 +45,10 @@ Nếu khoảng cách hòa, kết quả phụ thuộc quy tắc phá hòa. Slide 
 
 Kết quả cuối:
 
-\[
-S_1=\{p_1,p_2,p_3,p_4,p_{10}\},\quad c_1=(1.3,1.3),
-\]
-
-\[
-S_2=\{p_5,p_6,p_7,p_8,p_9\},\quad c_2=(5.3,5.3).
-\]
+```text
+Cụm 1: S1 = {p1, p2, p3, p4, p10}; tâm c1 = (1.3, 1.3)
+Cụm 2: S2 = {p5, p6, p7, p8, p9};  tâm c2 = (5.3, 5.3)
+```
 
 Tên nhãn cụm có thể bị hoán đổi mà nghiệm vẫn tương đương; ý nghĩa nằm ở các nhóm điểm, không nằm ở số 1/2.
 
@@ -61,22 +58,21 @@ Tên nhãn cụm có thể bị hoán đổi mà nghiệm vẫn tương đương
 
 Quy ước pixel đen là 1, trắng là 0:
 
-\[
-I=\begin{bmatrix}
-0&0&0&0&0\\
-0&1&0&0&0\\
-0&1&1&1&0\\
-0&0&0&1&0\\
-0&0&0&0&0
-\end{bmatrix}.
-\]
+```text
+I = [ 0  0  0  0  0
+      0  1  0  0  0
+      0  1  1  1  0
+      0  0  0  1  0
+      0  0  0  0  0 ]
+```
 
 Hai phần tử cấu trúc:
 
-\[
-F_1=\begin{bmatrix}1&1&1\\1&1&1\\1&1&1\end{bmatrix},\qquad
-F_2=\begin{bmatrix}0&1&0\\1&1&1\\0&1&0\end{bmatrix}.
-\]
+```text
+F1 = [ 1  1  1       F2 = [ 0  1  0
+       1  1  1              1  1  1
+       1  1  1 ]            0  1  0 ]
+```
 
 #### Vì sao dilation “nở” vật thể?
 
@@ -84,27 +80,23 @@ Tại mỗi tâm, đầu ra bằng 1 nếu có **ít nhất một** vị trí m�
 
 Kết quả với khối vuông:
 
-\[
-I\oplus F_1=\begin{bmatrix}
-1&1&1&0&0\\
-1&1&1&1&1\\
-1&1&1&1&1\\
-1&1&1&1&1\\
-0&0&1&1&1
-\end{bmatrix}.
-\]
+```text
+I dilation F1 = [ 1  1  1  0  0
+                  1  1  1  1  1
+                  1  1  1  1  1
+                  1  1  1  1  1
+                  0  0  1  1  1 ]
+```
 
 Kết quả với hình chữ thập:
 
-\[
-I\oplus F_2=\begin{bmatrix}
-0&1&0&0&0\\
-1&1&1&1&0\\
-1&1&1&1&1\\
-0&1&1&1&1\\
-0&0&0&1&0
-\end{bmatrix}.
-\]
+```text
+I dilation F2 = [ 0  1  0  0  0
+                  1  1  1  1  0
+                  1  1  1  1  1
+                  0  1  1  1  1
+                  0  0  0  1  0 ]
+```
 
 `F1` nở cả chéo; `F2` chỉ nở bốn hướng chính, cho thấy hình phần tử cấu trúc quyết định hình học kết quả.
 
@@ -124,9 +116,9 @@ Mỗi mức xám `g` tạo điểm hai chiều `(g, h[g])`. Hai chiều có đơ
 
 Sau khi phân hai cụm, sắp các tâm theo thành phần mức xám. Ngưỡng được chọn ở trung điểm giữa mức xám trung bình của hai cụm:
 
-\[
-T=\frac{\mu_{dark}+\mu_{bright}}2.
-\]
+```text
+T = (mu_dark + mu_bright) / 2
+```
 
 So với ngưỡng cố định 127 để thấy K-means thích nghi với histogram của chính ảnh. Nếu phân mảnh chưa tốt, có thể thêm đặc trưng vị trí `(x,y)`, lọc nhiễu trước, dùng nhiều cụm hơn, hoặc áp dụng opening/closing sau ngưỡng.
 
@@ -146,3 +138,117 @@ Với ảnh nhị phân `H` và phần tử cấu trúc `F`:
 - Closing `(H⊕F)⊖F`: dilation rồi erosion → lấp lỗ/khe tối nhỏ.
 
 Mã có cả phiên bản tự viết bằng cửa sổ và phép gọi OpenCV để đối chiếu.
+
+## III. Code và lệnh quan trọng của chương 5
+
+### 1. Đọc dữ liệu điểm 2D
+
+```python
+import numpy as np
+
+points = np.loadtxt("C5_B1.txt", dtype=np.float64)
+print(points.shape)       # (số điểm, 2)
+print(points[:5])         # xem 5 điểm đầu
+```
+
+`points[:5]` là slicing: lấy từ đầu đến trước vị trí 5.
+
+### 2. Bước gán cụm của K-means
+
+```python
+# points: (N,D), centers: (K,D)
+difference = points[:, None, :] - centers[None, :, :]
+squared_distance = np.sum(difference ** 2, axis=2)
+labels = np.argmin(squared_distance, axis=1)
+```
+
+Ý nghĩa kích thước:
+
+- `points[:, None, :]` có dạng `(N,1,D)`.
+- `centers[None, :, :]` có dạng `(1,K,D)`.
+- NumPy broadcasting tạo hiệu của mọi cặp điểm–tâm, dạng `(N,K,D)`.
+- `argmin(..., axis=1)` trả chỉ số tâm gần nhất của từng điểm.
+
+### 3. Bước cập nhật tâm
+
+```python
+new_centers = np.empty_like(centers)
+
+for cluster in range(k):
+    members = points[labels == cluster]
+    if len(members) > 0:
+        new_centers[cluster] = members.mean(axis=0)
+```
+
+`labels == cluster` tạo mặt nạ True/False; dùng mặt nạ trong `points[...]` để lấy các điểm thuộc cụm.
+
+### 4. Điều kiện dừng K-means
+
+```python
+movement = np.linalg.norm(new_centers - centers, axis=1).max()
+centers = new_centers
+
+if movement < 1e-5:
+    break
+```
+
+`break` thoát khỏi vòng lặp gần nhất. Không nên dùng `new_centers == centers` vì số thực có sai số.
+
+### 5. Histogram và phân ngưỡng
+
+```python
+gray = cv2.imread("C5_B2.PNG", cv2.IMREAD_GRAYSCALE)
+histogram = np.bincount(gray.ravel(), minlength=256)
+
+threshold = 150
+binary = np.where(gray >= threshold, 255, 0).astype(np.uint8)
+```
+
+`np.where(điều_kiện, giá_trị_đúng, giá_trị_sai)` thực hiện cho mọi pixel cùng lúc.
+
+### 6. K-means màu
+
+```python
+h, w = image.shape[:2]
+pixels = image.reshape(-1, 3).astype(np.float64)
+
+labels, centers, history = kmeans(pixels, k=5)
+segmented_pixels = centers[labels]
+segmented = segmented_pixels.reshape(h, w, 3).astype(np.uint8)
+```
+
+`reshape(-1,3)` để Python tự tính số hàng; mỗi hàng mới là một pixel BGR.
+
+### 7. Dilation và erosion tự viết
+
+```python
+padded = np.pad(binary > 0, 1, mode="constant", constant_values=False)
+result = np.zeros_like(binary)
+
+for y in range(binary.shape[0]):
+    for x in range(binary.shape[1]):
+        window = padded[y:y + 3, x:x + 3]
+        result[y, x] = 255 if np.any(window) else 0       # dilation
+        # result[y, x] = 255 if np.all(window) else 0    # erosion
+```
+
+`np.any` đúng nếu ít nhất một phần tử đúng; `np.all` chỉ đúng nếu tất cả phần tử đúng.
+
+### 8. Morphology bằng OpenCV
+
+```python
+kernel = np.ones((3, 3), dtype=np.uint8)
+
+dilation = cv2.dilate(binary, kernel)
+erosion = cv2.erode(binary, kernel)
+opening = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel)
+closing = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel)
+```
+
+### 9. Lệnh chạy
+
+```powershell
+cd LOI_GIAI
+python .\code\chuong5.py
+python .\code\chuong5.py --show
+```
